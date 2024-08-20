@@ -4,7 +4,17 @@ const asyncHandler = require("express-async-handler");
 
 // Get all posts
 exports.getAllPosts = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: getAllPosts");
+  const posts = await Post.find();
+
+  if (!posts) {
+    const err = new Error("No posts found.");
+    err.status = 404;
+    return next(err);
+  } else if (posts.length < 1) {
+    res.status(204).send("No blog posts to show.");
+  } else {
+    res.status(200).json(posts);
+  }
 });
 
 // Get a specific post

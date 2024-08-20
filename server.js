@@ -1,10 +1,12 @@
 // @ts-check
 const express = require("express");
 const mongoose = require("mongoose");
+const postRoutes = require("./routes/postRoutes");
 
 require("dotenv").config();
 
 const app = express();
+app.use(express.json());
 
 const port = process.env.PORT;
 const uri = process.env.MONGODB_URI;
@@ -22,9 +24,7 @@ async function main() {
   }
 }
 
-app.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
+app.use("/api", postRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on port: ${port}`);
