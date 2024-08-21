@@ -1,5 +1,5 @@
 // @ts-check
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 const Post = require("../models/Post");
 const asyncHandler = require("express-async-handler");
 
@@ -55,7 +55,28 @@ exports.createPost = asyncHandler(async (req, res) => {
 
 // Update a post
 exports.updatePost = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: updatePost");
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res.status(400);
+    throw new Error("Invalid Post ID. Please provide a valid Post ID.");
+  }
+
+  const updatedData = {
+    ...req.body,
+    updatedAt: Date.now(),
+  };
+
+  const updatedPost = await Post.findByIdAndUpdate(id, updatedData, {
+    new: true,
+  });
+
+  if (!updatedPost) {
+    res.status(404);
+    throw new Error("Post not found");
+  }
+
+  res.status(200).json(updatedPost);
 });
 
 // Delete a post
