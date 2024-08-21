@@ -8,7 +8,7 @@ exports.getAllPosts = asyncHandler(async (req, res, next) => {
   const posts = await Post.find();
 
   if (posts.length < 1) {
-    res.status(204).send("No blog posts to show.");
+    res.status(404).json({ message: "No blog posts to show." });
   } else {
     res.status(200).json(posts);
   }
@@ -81,5 +81,19 @@ exports.updatePost = asyncHandler(async (req, res, next) => {
 
 // Delete a post
 exports.deletePost = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: deletePost");
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res.status(400);
+    throw new Error("Invalid Post ID. Please provide a valid Post ID.");
+  }
+
+  const post = await Post.findByIdAndDelete(id);
+
+  if (!post) {
+    res.status(404);
+    throw new Error("Post not found");
+  }
+
+  res.status(200).json({ message: "Post deleted." });
 });
