@@ -6,11 +6,7 @@ const asyncHandler = require("express-async-handler");
 exports.getAllPosts = asyncHandler(async (req, res, next) => {
   const posts = await Post.find();
 
-  if (!posts) {
-    const err = new Error("No posts found.");
-    err.status = 404;
-    return next(err);
-  } else if (posts.length < 1) {
+  if (posts.length < 1) {
     res.status(204).send("No blog posts to show.");
   } else {
     res.status(200).json(posts);
@@ -23,8 +19,23 @@ exports.getPostById = asyncHandler(async (req, res, next) => {
 });
 
 // Create a post
-exports.createPost = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: createPost");
+exports.createPost = asyncHandler(async (req, res) => {
+  const { title, content, author } = req.body;
+
+  if (!title || !author || !content) {
+    res.status(400);
+    throw new Error("Please add all fields");
+  }
+
+  const post = new Post({
+    title,
+    content,
+    author,
+  });
+
+  const newPost = await post.save();
+
+  res.status(201).json(newPost);
 });
 
 // Update a post

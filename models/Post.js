@@ -25,12 +25,6 @@ const PostSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  tags: [
-    {
-      type: String,
-      trim: true,
-    },
-  ],
 });
 
 // Middleware to update the `updatedAt` field before saving
