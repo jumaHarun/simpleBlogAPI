@@ -1,7 +1,7 @@
 // @ts-check
 const express = require("express");
 const mongoose = require("mongoose");
-const postRouter = require("./routes/postRoutes");
+const postRouter = require("./routes/posts");
 
 require("dotenv").config();
 
