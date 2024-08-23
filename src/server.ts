@@ -1,14 +1,15 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const postRouter = require("./routes/posts");
+import express, { Application, Request, Response } from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import postRouter from "./routes/posts.ts";
 
-require("dotenv").config();
+dotenv.config();
 
-const app = express();
+const app: Application = express();
 app.use(express.json());
 
 const port = process.env.PORT || 3000;
-const uri = process.env.MONGODB_URI;
+const uri = process.env.MONGODB_URI!;
 
 mongoose.set("strictQuery", false);
 
@@ -16,14 +17,10 @@ main().catch((err) => {
   console.error(err);
 });
 async function main() {
-  if (uri) {
-    await mongoose.connect(uri);
-  } else {
-    throw new Error("Please provide a link to your MongoDB database");
-  }
+  await mongoose.connect(uri);
 }
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.redirect("/api/posts");
 });
 
