@@ -5,16 +5,18 @@ const Schema = mongoose.Schema;
 const PostSchema = new Schema({
   title: {
     type: String,
-    required: true,
+    required: [true, "Title is required."],
+    minLength: [5, "Title must be at least 5 characters long"],
     trim: true,
   },
   content: {
     type: String,
-    required: true,
+    required: [true, "Content is required."],
+    minLength: [20, "Content must be at least 20 characters long"],
   },
   author: {
     type: String,
-    required: true,
+    required: [true, "Author is required."],
     trim: true,
   },
   createdAt: {

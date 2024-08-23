@@ -44,7 +44,7 @@ The Simple Blog API is a RESTful API designed for managing blog posts. This proj
 
    Create a `.env` file in the root directory of the project and add the following environment variables:
 
-   ```
+   ```.env
    MONGODB_URI=your_mongodb_connection_string
    PORT=3000
    ```
@@ -166,7 +166,7 @@ The Simple Blog API is a RESTful API designed for managing blog posts. This proj
 
 ## Folder Structure
 
-```
+```text
 /simpleBlogAPI
 │
 ├── /models
@@ -178,8 +178,13 @@ The Simple Blog API is a RESTful API designed for managing blog posts. This proj
 ├── /controllers
 │   └── postController.js
 │
-├── .env
 ├── server.js
+│
+├── .env
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── LICENSE
 └── README.md
 ```
 
