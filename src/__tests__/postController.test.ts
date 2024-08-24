@@ -104,3 +104,83 @@ describe("POST /posts", () => {
     expect(response.body["author"]).toBe("Author 1");
   });
 });
+
+describe("PATCH /posts/:id", () => {
+  beforeAll(async () => {
+    await mongoose.connect("mongodb://localhost:27017/testDB");
+  });
+
+  afterEach(async () => {
+    await Post.deleteMany({});
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
+  it("should update a post partially", async () => {
+    const post1 = new Post({
+      title: "Post 1",
+      content: "This is content for Post 1",
+      author: "Author 1",
+    });
+
+    await post1.save();
+
+    const response = await request(app).patch(`/api/posts/${post1._id}`).send({
+      title: "Updated Post 1",
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body["title"]).toBe("Updated Post 1");
+  });
+
+  it("should update a post completely", async () => {
+    const post1 = new Post({
+      title: "Post 1",
+      content: "This is content for Post 1",
+      author: "Author 1",
+    });
+
+    await post1.save();
+
+    const response = await request(app).patch(`/api/posts/${post1._id}`).send({
+      title: "Updated Post 1",
+      content: "This is the updated content for Post 1",
+      author: "Updated Author 1",
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body["title"]).toBe("Updated Post 1");
+    expect(response.body["content"]).toBe(
+      "This is the updated content for Post 1"
+    );
+    expect(response.body["author"]).toBe("Updated Author 1");
+  });
+
+  it("should update the updatedAt field when a post is updated", async () => {
+    const post = new Post({
+      title: "Post 1",
+      content: "This is content for Post 1",
+      author: "Author 1",
+    });
+
+    await post.save();
+
+    // Use `getTime()` since toBeGreaterThan expects type `number | bigint`
+    const initialupdatedAt = post.updatedAt.getTime();
+
+    // Wait a moment to ensure the updatedAt field will change
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Update the post
+    await Post.findByIdAndUpdate(post._id, { title: "Updated Post 1" });
+
+    // Retrieve the updated post
+    const updatedPost = await Post.findById(post._id);
+    const newUpdatedAt = updatedPost!.updatedAt.getTime();
+
+    expect(newUpdatedAt).not.toEqual(initialupdatedAt);
+    expect(newUpdatedAt).toBeGreaterThan(initialupdatedAt);
+  });
+});
