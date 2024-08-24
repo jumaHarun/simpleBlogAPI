@@ -76,3 +76,31 @@ describe("GET /posts/:id", () => {
     expect(response.body.content).toBe(post1.content);
   });
 });
+
+describe("POST /posts", () => {
+  beforeAll(async () => {
+    await mongoose.connect("mongodb://localhost:27017/testDB");
+  });
+
+  afterEach(async () => {
+    await Post.deleteMany({});
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
+  it("should create and save a post to the database", async () => {
+    const response = await request(app).post("/api/posts").send({
+      title: "Post 1",
+      content: "This is content for Post 1",
+      author: "Author 1",
+    });
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("_id");
+    expect(response.body["title"]).toBe("Post 1");
+    expect(response.body["content"]).toBe("This is content for Post 1");
+    expect(response.body["author"]).toBe("Author 1");
+  });
+});
