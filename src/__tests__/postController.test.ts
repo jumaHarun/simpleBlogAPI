@@ -184,3 +184,35 @@ describe("PATCH /posts/:id", () => {
     expect(newUpdatedAt).toBeGreaterThan(initialupdatedAt);
   });
 });
+
+describe("DELETE /posts/:id", () => {
+  beforeAll(async () => {
+    await mongoose.connect("mongodb://localhost:27017/testDB");
+  });
+
+  afterEach(async () => {
+    await Post.deleteMany({});
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
+  it("should delete a post from the database", async () => {
+    const post = new Post({
+      title: "Post 1",
+      content: "This is content for Post 1",
+      author: "Author 1",
+    });
+
+    await post.save();
+
+    const response = await request(app).delete(`/api/posts/${post._id}`);
+
+    const find = await Post.findById(post._id);
+
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe("Post deleted.");
+    expect(find).toBe(null);
+  });
+});
