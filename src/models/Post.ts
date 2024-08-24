@@ -34,6 +34,12 @@ PostSchema.pre("save", function (next) {
   next();
 });
 
+// Middleware to update the `updatedAt` field before updating
+PostSchema.pre("findOneAndUpdate", function (next) {
+  this.set({ updatedAt: new Date() });
+  next();
+});
+
 // Virtual for blog's URL
 PostSchema.virtual("url").get(function () {
   return `/posts/${this._id}`;

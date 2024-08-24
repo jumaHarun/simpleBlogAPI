@@ -8,12 +8,8 @@ export const getAllPosts = asyncHandler(
   async (req: Request, res: Response, next) => {
     const posts = await Post.find();
 
-    if (posts.length < 1) {
-      res.status(404).json({ message: "No blog posts to show." });
-    } else {
-      // The first item is `postCount: ${posts.length}`
-      res.status(200).json([`postCount: ${posts.length}`, ...posts]);
-    }
+    // The first item is `postCount: ${posts.length}`
+    res.status(200).json([{ postCount: posts.length }, ...posts]);
   }
 );
 
@@ -30,8 +26,7 @@ export const getPostById = asyncHandler(
     const post = await Post.findById(id);
 
     if (!post) {
-      res.status(404);
-      throw new Error("Post not found");
+      res.status(404).json({ message: "Post not found" });
     }
 
     res.status(200).json(post);
@@ -70,18 +65,12 @@ export const updatePost = asyncHandler(
       throw new Error("Invalid Post ID. Please provide a valid Post ID.");
     }
 
-    const updatedData = {
-      ...req.body,
-      updatedAt: Date.now(),
-    };
-
-    const updatedPost = await Post.findByIdAndUpdate(id, updatedData, {
+    const updatedPost = await Post.findByIdAndUpdate(id, req.body, {
       new: true,
     });
 
     if (!updatedPost) {
-      res.status(404);
-      throw new Error("Post not found");
+      res.status(404).json({ message: "Post not found" });
     }
 
     res.status(200).json(updatedPost);
