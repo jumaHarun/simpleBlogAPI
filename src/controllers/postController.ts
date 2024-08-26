@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import mongoose from "mongoose";
 import Post from "../models/Post.ts";
 import asyncHandler from "express-async-handler";
 
@@ -8,8 +7,11 @@ export const getAllPosts = asyncHandler(
   async (req: Request, res: Response, next) => {
     const posts = await Post.find();
 
-    // The first item is `postCount: ${posts.length}`
-    res.status(200).json([{ postCount: posts.length }, ...posts]);
+    if (posts.length < 1) {
+      res.status(404).json([{ message: `No posts found.` }]);
+    }
+
+    res.status(200).json(posts);
   }
 );
 
@@ -18,15 +20,10 @@ export const getPostById = asyncHandler(
   async (req: Request, res: Response, next) => {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400);
-      throw new Error("Invalid Post ID. Please provide a valid Post ID.");
-    }
-
     const post = await Post.findById(id);
 
     if (!post) {
-      res.status(404).json({ message: "Post not found" });
+      res.status(404).json({ message: `Post with ID ${id} not found.` });
     }
 
     res.status(200).json(post);
@@ -37,11 +34,6 @@ export const getPostById = asyncHandler(
 export const createPost = asyncHandler(
   async (req: Request, res: Response, next) => {
     const { title, content, author } = req.body;
-
-    if (!title || !author || !content) {
-      res.status(400).json({ message: "Please add all required fields" });
-      return;
-    }
 
     const post = new Post({
       title,
@@ -60,17 +52,12 @@ export const updatePost = asyncHandler(
   async (req: Request, res: Response, next) => {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400);
-      throw new Error("Invalid Post ID. Please provide a valid Post ID.");
-    }
-
     const updatedPost = await Post.findByIdAndUpdate(id, req.body, {
       new: true,
     });
 
     if (!updatedPost) {
-      res.status(404).json({ message: "Post not found" });
+      res.status(404).json({ message: `Post with ID ${id} not found.` });
     }
 
     res.status(200).json(updatedPost);
@@ -82,16 +69,10 @@ export const deletePost = asyncHandler(
   async (req: Request, res: Response, next) => {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400);
-      throw new Error("Invalid Post ID. Please provide a valid Post ID.");
-    }
-
     const post = await Post.findByIdAndDelete(id);
 
     if (!post) {
-      res.status(404);
-      throw new Error("Post not found");
+      res.status(404).json({ message: `Post with ID ${id} not found.` });
     }
 
     res.status(200).json({ message: "Post deleted." });

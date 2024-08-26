@@ -1,7 +1,15 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 const Schema = mongoose.Schema;
 
-const PostSchema = new Schema({
+interface IPostSchema extends Document {
+  title: string;
+  content: string;
+  author: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const PostSchema = new Schema<IPostSchema>({
   title: {
     type: String,
     required: [true, "Title is required."],
