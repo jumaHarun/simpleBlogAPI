@@ -2,13 +2,14 @@ import express, { Application, Request, Response } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import postRouter from "./routes/posts.ts";
+import { errorHandler } from "./middlewares/errorHandler.ts";
 
 dotenv.config();
 
 const app: Application = express();
 app.use(express.json());
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 const uri = process.env.MONGODB_URI!;
 
 mongoose.set("strictQuery", false);
@@ -25,6 +26,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api", postRouter);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Server running on port: ${port}`);
