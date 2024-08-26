@@ -107,6 +107,6 @@
   },
 
   // Specify the files to include and exclude when compling
-  "include": ["src/**/*.ts"],
+  "include": ["src/*.ts", "src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

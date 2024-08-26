@@ -1,6 +1,8 @@
 import express, { Application, Request, Response } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import swaggerUi from "swagger-ui-express";
+import { swaggerDocsSpecs } from "./swaggerOptions.ts";
 import postRouter from "./routes/posts.ts";
 import { errorHandler } from "./middlewares/errorHandler.ts";
 
@@ -9,7 +11,7 @@ dotenv.config();
 const app: Application = express();
 app.use(express.json());
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 /**
  * Please include the database you are using in the URL.
  * E.g., "mongodb://localhost:27017/testDB"
@@ -34,6 +36,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api", postRouter);
 app.use(errorHandler);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocsSpecs));
 
 app.listen(port, () => {
   console.log(`Server running on port: ${port}`);
