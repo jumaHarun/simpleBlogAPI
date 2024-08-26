@@ -10,7 +10,11 @@ const app: Application = express();
 app.use(express.json());
 
 const port = process.env.PORT || 5000;
-const uri = process.env.MONGODB_URI!;
+/**
+ * Please include the database you are using in the URL.
+ * E.g., "mongodb://localhost:27017/testDB"
+ */
+const uri = process.env.MONGODB_URI;
 
 mongoose.set("strictQuery", false);
 
@@ -18,6 +22,9 @@ main().catch((err) => {
   console.error(err);
 });
 async function main() {
+  if (!uri) {
+    throw new Error("Please provide your MongoDB database URL.");
+  }
   await mongoose.connect(uri);
 }
 
