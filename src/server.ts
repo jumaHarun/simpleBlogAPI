@@ -36,7 +36,16 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api", postRouter);
 app.use(errorHandler);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocsSpecs));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(
+    swaggerDocsSpecs /*, {
+    customCssUrl:
+      "https://cdn.jsdelivr.net/npm/[email protected]/themes/3.x/theme-newspaper.css",
+  }*/
+  )
+);
 
 app.listen(port, () => {
   console.log(`Server running on port: ${port}`);
