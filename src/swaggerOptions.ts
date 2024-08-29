@@ -19,12 +19,8 @@ const swaggerOptions: OAS3Options = {
     },
     tags: [
       {
-        name: "posts/",
-        description: "No url parameter required.",
-      },
-      {
-        name: "posts/:id",
-        description: "Requires the url parameter id to be passed.",
+        name: "posts",
+        description: "The Blog Posts Managing API.",
       },
     ],
     servers: [
@@ -38,13 +34,14 @@ const swaggerOptions: OAS3Options = {
       },
     ],
     paths: {
-      "/api/posts": {
+      "/posts": {
         post: {
-          tags: ["posts/"],
-          summary: "Creates a new post.",
+          tags: ["posts"],
+          summary: "Creates a new post",
+          description: "Creates a new post",
           operationId: "createPost",
           requestBody: {
-            description: "Post to add to the database",
+            description: "The post to add",
             required: true,
             content: {
               "application/json": {
@@ -54,10 +51,9 @@ const swaggerOptions: OAS3Options = {
               },
             },
           },
-
           responses: {
             201: {
-              description: "The post was created successfully.",
+              description: "Successful operation",
               content: {
                 "application/json": {
                   schema: {
@@ -67,11 +63,18 @@ const swaggerOptions: OAS3Options = {
               },
             },
             default: {
-              description: "unexpected error",
+              description: "Unexpected error",
               content: {
                 "application/json": {
                   schema: {
-                    $ref: "#/components/schemas/Error",
+                    oneOf: [
+                      {
+                        $ref: "#/components/schemas/Error",
+                      },
+                      {
+                        $ref: "#/components/schemas/ValidationError",
+                      },
+                    ],
                   },
                 },
               },
@@ -79,12 +82,13 @@ const swaggerOptions: OAS3Options = {
           },
         },
         get: {
-          tags: ["posts/"],
-          summary: "Retrieves a list of posts.",
+          tags: ["posts"],
+          summary: "Retrieves all posts",
+          description: "Retrieves a list of available posts",
           operationId: "getAllPosts",
           responses: {
             200: {
-              description: "A list of all available posts.",
+              description: "Successful operation",
               content: {
                 "application/json": {
                   schema: {
@@ -97,24 +101,36 @@ const swaggerOptions: OAS3Options = {
               },
             },
             404: {
-              description: "No posts are available.",
+              description: "Posts not found",
               content: {
                 "application/json": {
                   schema: {
-                    $ref: "#/components/schemas/Error",
+                    type: "array",
+                    items: {
+                      $ref: "#/components/schemas/Error",
+                    },
                   },
-                  example: {
-                    message: "No posts found.",
-                  },
+                  example: [
+                    {
+                      message: "No posts found.",
+                    },
+                  ],
                 },
               },
             },
             default: {
-              description: "unexpected error",
+              description: "Unexpected error",
               content: {
                 "application/json": {
                   schema: {
-                    $ref: "#/components/schemas/Error",
+                    oneOf: [
+                      {
+                        $ref: "#/components/schemas/Error",
+                      },
+                      {
+                        $ref: "#/components/schemas/ValidationError",
+                      },
+                    ],
                   },
                 },
               },
@@ -122,16 +138,17 @@ const swaggerOptions: OAS3Options = {
           },
         },
       },
-      "/api/posts/{id}": {
+      "/posts/{id}": {
         get: {
-          tags: ["posts/:id"],
-          summary: "Retrieves a specific post by ID.",
+          tags: ["posts"],
+          summary: "Find a post by ID",
+          description: "Retrieves a single post",
           operationId: "getPostById",
           parameters: [
             {
               name: "id",
               in: "path",
-              description: "the id of the post",
+              description: "ID of the post to retrieve",
               required: true,
               schema: {
                 type: "string",
@@ -139,6 +156,262 @@ const swaggerOptions: OAS3Options = {
               example: "605c72b6b5d6e2b3f4e5b1c4",
             },
           ],
+          responses: {
+            200: {
+              description: "Successful operation",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/Post",
+                  },
+                },
+              },
+            },
+            400: {
+              description: "Invalid ID supplied",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/ValidationError",
+                  },
+                  example: {
+                    errors: [
+                      {
+                        type: "field",
+                        value: "asd",
+                        msg: "Invalid post ID. Please provide a valid ObjectId",
+                        path: "id",
+                        location: "param",
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            404: {
+              description: "Post not found",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/Error",
+                  },
+                  example: {
+                    message: "Post with ID 705c72b6b5d6e2b3f4e5b1c4 not found",
+                  },
+                },
+              },
+            },
+            default: {
+              description: "Unexpected error",
+              content: {
+                "application/json": {
+                  schema: {
+                    oneOf: [
+                      {
+                        $ref: "#/components/schemas/Error",
+                      },
+                      {
+                        $ref: "#/components/schemas/ValidationError",
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+        patch: {
+          tags: ["posts"],
+          summary: "Updates a post found by ID",
+          description: "Updates a single post partially or completely",
+          operationId: "updatePost",
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              description: "ID of the post to retrieve",
+              required: true,
+              schema: {
+                type: "string",
+              },
+              example: "605c72b6b5d6e2b3f4e5b1c4",
+            },
+          ],
+
+          requestBody: {
+            description: "Updates the title of a post",
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    title: {
+                      type: "string",
+                      example: "A day in the life",
+                    },
+                  },
+                },
+              },
+            },
+          },
+
+          responses: {
+            200: {
+              description: "Successful operation",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/Post",
+                  },
+                  example: {
+                    _id: "605c72b6b5d6e2b3f4e5b1c4",
+                    title: "A day in the life",
+                    content:
+                      "Here's what a day in the life of a Backend Developer is like...",
+                    author: "John Doe",
+                    createdAt: "2024-08-24T12:34:56.789Z",
+                    updatedAt: new Date(),
+                  },
+                },
+              },
+            },
+            400: {
+              description: "Invalid ID supplied",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/ValidationError",
+                  },
+                  example: {
+                    errors: [
+                      {
+                        type: "field",
+                        value: "asd",
+                        msg: "Invalid post ID. Please provide a valid ObjectId",
+                        path: "id",
+                        location: "param",
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            404: {
+              description: "Post not found",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/Error",
+                  },
+                  example: {
+                    message: "Post with ID 705c72b6b5d6e2b3f4e5b1c4 not found",
+                  },
+                },
+              },
+            },
+            default: {
+              description: "Unexpected error",
+              content: {
+                "application/json": {
+                  schema: {
+                    oneOf: [
+                      {
+                        $ref: "#/components/schemas/Error",
+                      },
+                      {
+                        $ref: "#/components/schemas/ValidationError",
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+        delete: {
+          tags: ["posts"],
+          summary: "Delete a post",
+          description: "Deletes a post found by ID",
+          operationId: "deletePost",
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              description: "ID of the post to retrieve",
+              required: true,
+              schema: {
+                type: "string",
+              },
+              example: "605c72b6b5d6e2b3f4e5b1c4",
+            },
+          ],
+          responses: {
+            200: {
+              description: "Successful operation",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/Error",
+                  },
+                  example: {
+                    message: "Post deleted",
+                  },
+                },
+              },
+            },
+            400: {
+              description: "Invalid ID supplied",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/ValidationError",
+                  },
+                  example: {
+                    errors: [
+                      {
+                        type: "field",
+                        value: "asd",
+                        msg: "Invalid post ID. Please provide a valid ObjectId",
+                        path: "id",
+                        location: "param",
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            404: {
+              description: "Post not found",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/Error",
+                  },
+                  example: {
+                    message: "Post with ID 705c72b6b5d6e2b3f4e5b1c4 not found",
+                  },
+                },
+              },
+            },
+            default: {
+              description: "Unexpected error",
+              content: {
+                "application/json": {
+                  schema: {
+                    oneOf: [
+                      {
+                        $ref: "#/components/schemas/Error",
+                      },
+                      {
+                        $ref: "#/components/schemas/ValidationError",
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -212,6 +485,35 @@ const swaggerOptions: OAS3Options = {
           properties: {
             message: {
               type: "string",
+            },
+          },
+        },
+
+        ValidationError: {
+          type: "object",
+          properties: {
+            errors: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  type: {
+                    type: "string",
+                  },
+                  value: {
+                    type: "string",
+                  },
+                  msg: {
+                    type: "string",
+                  },
+                  path: {
+                    type: "string",
+                  },
+                  location: {
+                    type: "string",
+                  },
+                },
+              },
             },
           },
         },
