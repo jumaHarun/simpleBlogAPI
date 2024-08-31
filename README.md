@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-The Simple Blog API is a RESTful API designed for managing blog posts. This project provides basic CRUD (Create, Read, Update, Delete) operations for blog posts using MongoDB with Mongoose as the Object Data Modeling (ODM) library. The API is built with Node.js and aims to help me gain a solid understanding of MongoDB CRUD operations, Mongoose schema setup, and REST API development.
+The Simple Blog API is a RESTful API designed for managing blog posts. This project provides basic CRUD (Create, Read, Update, Delete) operations for blog posts using MongoDB with Mongoose as the Object Data Modeling (ODM) library. The API is built with Node.js with TypeScript, and aims to help me gain a solid understanding of MongoDB CRUD operations, Mongoose schema setup, and REST API development.
 
 ## Features
 
@@ -14,15 +14,20 @@ The Simple Blog API is a RESTful API designed for managing blog posts. This proj
 ## Technologies
 
 - **Node.js**: JavaScript runtime for building the server.
+- **TypeScript**: Typed superset of JavaScript that adds Type safety.
 - **Express**: Web framework for Node.js to handle routing and middleware.
 - **MongoDB**: NoSQL database for storing blog posts.
 - **Mongoose**: ODM library for MongoDB and Node.js.
+- **Jest**: Testing library.
+- **Swagger**: API Documentation.
+- **express-async-handler**: Express Library to handle asynchronous code.
+- **express-validator**: Express Library to validate incoming data from requests.
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (version 14 or higher)
+- [Node.js](https://nodejs.org/) (version 22 or higher)
 - [MongoDB](https://www.mongodb.com/) (local installation or cloud-based service like MongoDB Atlas)
 
 ### Installation
@@ -63,129 +68,63 @@ The Simple Blog API is a RESTful API designed for managing blog posts. This proj
 
 ### Create a Post
 
-- **Endpoint**: `POST /posts`
-- **Description**: Create a new blog post.
-- **Request Body**:
-
-  ```json
-  {
-    "title": "Post Title",
-    "content": "Post content goes here.",
-    "author": "Author Name"
-  }
-  ```
-
-- **Response**:
-
-  ```json
-  {
-    "_id": "post_id",
-    "title": "Post Title",
-    "content": "Post content goes here.",
-    "author": "Author Name",
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp"
-  }
-  ```
+- **Endpoint**: `POST /api/posts`
 
 ### Get All Posts
 
-- **Endpoint**: `GET /posts`
-- **Description**: Retrieve all blog posts.
-- **Response**:
-
-  ```json
-  [
-    {
-      "_id": "post_id",
-      "title": "Post Title",
-      "content": "Post content goes here.",
-      "author": "Author Name",
-      "createdAt": "timestamp",
-      "updatedAt": "timestamp"
-    },
-    ...
-  ]
-  ```
+- **Endpoint**: `GET /api/posts`
 
 ### Get a Single Post
 
-- **Endpoint**: `GET /posts/:id`
-- **Description**: Retrieve a blog post by its ID.
-- **Response**:
-
-  ```json
-  {
-    "_id": "post_id",
-    "title": "Post Title",
-    "content": "Post content goes here.",
-    "author": "Author Name",
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp"
-  }
-  ```
+- **Endpoint**: `GET /api/posts/:id`
 
 ### Update a Post
 
-- **Endpoint**: `PUT /posts/:id`
-- **Description**: Update a blog post by its ID.
-- **Request Body**:
-
-  ```json
-  {
-    "title": "Updated Post Title",
-    "content": "Updated content.",
-    "author": "Updated Author Name"
-  }
-  ```
-
-- **Response**:
-
-  ```json
-  {
-    "_id": "post_id",
-    "title": "Updated Post Title",
-    "content": "Updated content.",
-    "author": "Updated Author Name",
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp"
-  }
-  ```
+- **Endpoint**: `PUT /api/posts/:id`
 
 ### Delete a Post
 
-- **Endpoint**: `DELETE /posts/:id`
-- **Description**: Delete a blog post by its ID.
-- **Response**:
+- **Endpoint**: `DELETE /api/posts/:id`
 
-  ```json
-  {
-    "message": "Post deleted successfully."
-  }
-  ```
+### API Documentation
+
+The documentation for the features implemented is available at `/api-docs`
 
 ## Folder Structure
 
 ```text
 /simpleBlogAPI
 │
-├── /models
-│   └── post.js
+├── /node_modules
+├── /src
+├──── /__tests__
+│     └── postController.test.ts
 │
-├── /routes
-│   └── posts.js
+├──── /controllers
+│     └── postController.ts
 │
-├── /controllers
-│   └── postController.js
+├──── /middlewares
+│     └── errorHandler.ts
+│     └── handleValidationError.ts
+│     └── validatePosts.ts
 │
-├── server.js
+├──── /models
+│     └── Post.ts
+│
+├──── /routes
+│     └── posts.ts│
+│
+├──── server.ts
+├──── swaggerOptions.ts
 │
 ├── .env
 ├── .gitignore
-├── package.json
-├── package-lock.json
+├── jest.config.js
 ├── LICENSE
-└── README.md
+├── package-lock.json
+├── package.json
+├── README.md
+└── tsconfig.json
 ```
 
 ## Contributing
