@@ -2,6 +2,8 @@ import express, { Application, Request, Response } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
+import cors from "cors";
+import helmet from "helmet";
 import { swaggerDocsSpecs } from "./swaggerOptions.ts";
 import postRouter from "./routes/posts.ts";
 import { errorHandler } from "./middlewares/errorHandler.ts";
@@ -10,6 +12,9 @@ dotenv.config();
 
 const app: Application = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+app.use(helmet());
 
 const port = process.env.PORT || 3000;
 /**
